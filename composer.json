@@ -1,0 +1,42 @@
+{
+    "name": "wsc/sync-variant-positions",
+    "version": "6.7.5.1",
+    "description": "Synchronisiert product_configurator_setting.position mit property_group_option_translation.position",
+    "type": "shopware-platform-plugin",
+    "license": "GPL-3.0-or-later",
+    "authors": [
+        {
+            "name": "Christian Säum",
+            "email": "Christian.Saeum@Web-SEO-Consulting.eu"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "WSCPluginSWSyncVariantPositions\\": "src/"
+        }
+    },
+    "extra": {
+        "label": {
+            "de-DE": "Configurator-Positionen synchronisieren",
+            "en-GB": "Sync Configurator Positions"
+        },
+        "description": {
+            "de-DE": "Synchronisiert die Reihenfolge der Variantenauswahl (Configurator-Settings) mit den Eigenschaftswert-Positionen",
+            "en-GB": "Syncs configurator setting positions with property group option positions"
+        },
+        "shopware-plugin-class": "WSCPluginSWSyncVariantPositions\\WSCPluginSWSyncVariantPositions",
+        "supportLink": {
+            "de-DE": "https://www.Web-SEO-Consulting.eu/support",
+            "en-GB": "https://www.Web-SEO-Consulting.eu/support",
+            "fr-FR": "https://www.Web-SEO-Consulting.eu/support"
+        },
+        "manufacturerLink": {
+            "de-DE": "https://www.Web-SEO-Consulting.eu",
+            "en-GB": "https://www.Web-SEO-Consulting.eu",
+            "fr-FR": "https://www.Web-SEO-Consulting.eu"
+        }
+    },
+    "require": {
+        "shopware/core": "^v6.7.0.0"
+    }
+}
