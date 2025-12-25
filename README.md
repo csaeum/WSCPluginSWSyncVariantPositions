@@ -2,6 +2,11 @@
 
 Synchronisiert die Positionen der Varianten-Auswahl (`product_configurator_setting.position`) mit den Eigenschaftswert-Positionen aus `property_group_option_translation.position` in Shopware 6.
 
+## Kompatibilität
+
+- Shopware 6.7.x
+- bei anderen Shopware Versionen bitte immmer davor Datenbank Backup machen.
+
 ## Problem
 
 Beim Import von Eigenschaften (Properties) oder manueller Pflege werden die Positionen in der Tabelle `property_group_option_translation` gespeichert. Nach dem Generieren der Varianten werden diese Positionen jedoch **nicht** automatisch auf die Configurator-Einstellungen (`product_configurator_setting`) übertragen, die die Reihenfolge der Variantenauswahl am Produkt steuern.
@@ -80,21 +85,11 @@ bin/console cache:clear
 | `--product-id` |  | Optional: Nur ein bestimmtes Produkt (UUID) synchronisieren |
 | `-v` | | Ausführliche Ausgabe mit Änderungsdetails |
 
-## Kompatibilität
-
-- Shopware 6.5.x
-- Shopware 6.6.x
-- Shopware 6.7.x
-
-## Lizenz
-
-GPL-3.0-or-later
-
-## Unterstützung
+## Lizenz & Unterstützung
 
 **Made with ❤️ by WSC - Web SEO Consulting**
 
-Dieses Plugin ist kostenlos und Open Source. Wenn es dir geholfen hat, freue ich mich über deine Unterstützung:
+Dieses Plugin ist kostenlos und Open Source (GPL-3.0-or-later). Wenn es dir geholfen hat, freue ich mich über deine Unterstützung:
 
 [![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-ffdd00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/csaeum)
 [![GitHub Sponsors](https://img.shields.io/badge/GitHub%20Sponsors-ea4aaa?style=for-the-badge&logo=github-sponsors&logoColor=white)](https://github.com/sponsors/csaeum)
