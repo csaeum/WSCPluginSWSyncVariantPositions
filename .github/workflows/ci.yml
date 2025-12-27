@@ -1,0 +1,119 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  php-checks:
+    name: PHP Quality Checks
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        php-version: ['8.1', '8.2', '8.3']
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, mysql
+          coverage: none
+
+      - name: Validate composer.json
+        run: composer validate --strict
+
+      - name: Cache Composer packages
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: ${{ runner.os }}-php-${{ matrix.php-version }}-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-${{ matrix.php-version }}-
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress --no-suggest
+
+      - name: Run PHP CodeSniffer (PSR-12)
+        run: |
+          composer require --dev squizlabs/php_codesniffer --no-interaction
+          vendor/bin/phpcs --standard=PSR12 --extensions=php --ignore=vendor src/
+        continue-on-error: true
+
+      - name: Run PHPStan
+        run: |
+          composer require --dev phpstan/phpstan --no-interaction
+          vendor/bin/phpstan analyse -l 8 src/
+        continue-on-error: true
+
+  shopware-compatibility:
+    name: Shopware Store Compatibility Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, mysql
+
+      - name: Install Shopware Plugin Tester
+        run: |
+          composer global require frosh/shopware-plugin-tester
+          echo "${HOME}/.composer/vendor/bin" >> $GITHUB_PATH
+        continue-on-error: true
+
+      - name: Validate Plugin Structure
+        run: |
+          # Check required files exist
+          test -f composer.json || (echo "composer.json missing" && exit 1)
+          test -f LICENSE || (echo "LICENSE missing" && exit 1)
+          test -f README.md || (echo "README.md missing" && exit 1)
+
+          # Check plugin class exists
+          find src -name "WSCPluginSWSyncVariantPositions.php" || (echo "Plugin class missing" && exit 1)
+
+          # Check services.xml exists
+          find src -name "services.xml" || (echo "services.xml missing" && exit 1)
+
+          echo "Plugin structure validation passed"
+
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
+        continue-on-error: true
+
+  yaml-lint:
+    name: YAML Lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install yamllint
+        run: pip install yamllint
+
+      - name: Run yamllint
+        run: |
+          find . -name "*.yml" -o -name "*.yaml" | xargs yamllint -d relaxed
+        continue-on-error: true

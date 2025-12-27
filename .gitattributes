@@ -1,0 +1,38 @@
+# Exclude development and CI files from git archive (ZIP/tar.gz exports)
+
+# GitHub & CI/CD
+.github/ export-ignore
+.gitattributes export-ignore
+.gitignore export-ignore
+
+# IDE & Editor
+.idea/ export-ignore
+.vscode/ export-ignore
+.claude/ export-ignore
+
+# Code Quality Tools
+phpcs.xml export-ignore
+phpstan.neon export-ignore
+.phpcs.xml export-ignore
+.php-cs-fixer.php export-ignore
+.php-cs-fixer.dist.php export-ignore
+
+# Testing
+tests/ export-ignore
+phpunit.xml export-ignore
+phpunit.xml.dist export-ignore
+.phpunit.result.cache export-ignore
+
+# Documentation (keep user-facing READMEs, exclude dev docs)
+CONTRIBUTING.md export-ignore
+CHANGELOG.md export-ignore
+.editorconfig export-ignore
+
+# Git
+.git/ export-ignore
+.gitmodules export-ignore
+
+# Other
+*.log export-ignore
+.DS_Store export-ignore
+Thumbs.db export-ignore

@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<ruleset name="WSC Shopware Plugin">
+    <description>Coding Standard for WSC Shopware Plugins</description>
+
+    <!-- Files to check -->
+    <file>src</file>
+
+    <!-- Exclude vendor directory -->
+    <exclude-pattern>vendor/*</exclude-pattern>
+
+    <!-- PSR-12 Coding Standard -->
+    <rule ref="PSR12"/>
+
+    <!-- Additional rules -->
+    <rule ref="Generic.Arrays.DisallowLongArraySyntax"/>
+    <rule ref="Generic.Files.LineLength">
+        <properties>
+            <property name="lineLimit" value="120"/>
+            <property name="absoluteLineLimit" value="150"/>
+        </properties>
+    </rule>
+</ruleset>

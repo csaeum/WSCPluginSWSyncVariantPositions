@@ -1,0 +1,31 @@
+# IDE & Editor
+.idea/
+.vscode/
+.claude/
+*.swp
+*.swo
+*~
+
+# Dependencies
+/vendor/
+node_modules/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Shopware specific
+.env.local
+.env.*.local
+
+# Build & Cache
+/var/
+/public/
+*.cache
+
+# Logs
+*.log
+
+# Testing
+.phpunit.result.cache
+/phpunit.xml
