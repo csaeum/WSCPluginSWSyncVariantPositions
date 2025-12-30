@@ -2,141 +2,123 @@
 
 **[Deutsch](README.md) | [Français](README.fr.md)**
 
-Synchronizes the variant selection positions (`product_configurator_setting.position`) with the property value positions from `property_group_option_translation.position` in Shopware 6.
+![Shopware 6](https://img.shields.io/badge/Shopware-6.5%20%7C%206.6%20%7C%206.7-179EFF?logo=shopware&logoColor=white)
+![PHP](https://img.shields.io/badge/PHP-8.1%2B-777BB4?logo=php&logoColor=white)
+![License](https://img.shields.io/badge/License-GPL--3.0--or--later-blue)
+![Maintained](https://img.shields.io/badge/Maintained-Yes-green)
 
-## Compatibility
+---
 
-- Shopware 6.5.x, 6.6.x, 6.7.x
-- **Important:** For other Shopware versions, always create a database backup first!
+## ⭐ License & Support
 
-## Problem & Solution
+**Made with ❤️ by [WSC - Web SEO Consulting](https://github.com/csaeum)**
+
+This project is free and open source under the [GPL-3.0-or-later](LICENSE) license.
+
+---
+
+### 💖 Support My Work
+
+If this project helped you:
+
+[![GitHub Sponsors](https://img.shields.io/badge/Sponsor-GitHub-ea4aaa?style=for-the-badge&logo=github)](https://github.com/sponsors/csaeum)
+[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-ffdd00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/csaeum)
+[![PayPal](https://img.shields.io/badge/PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://paypal.me/csaeum)
+
+---
+
+### 🔧 More Shopware Plugins
+
+| Plugin | Description |
+|--------|-------------|
+| [WSCPluginSWSyncVariantPositions](https://github.com/csaeum/WSCPluginSWSyncVariantPositions) | Synchronize variant positions |
+
+---
+
+[![GitHub followers](https://img.shields.io/github/followers/csaeum?style=social)](https://github.com/csaeum)
+[![GitHub stars](https://img.shields.io/github/stars/csaeum?style=social)](https://github.com/csaeum?tab=repositories)
+
+---
+
+## What does this plugin do?
+
+Synchronizes variant selection positions (`product_configurator_setting.position`) with property value positions from `property_group_option_translation.position` in Shopware 6.
 
 ### The Problem
 
-When importing properties or managing them manually, positions are stored in the `property_group_option_translation` table. After generating variants, these positions are **not** automatically transferred to the configurator settings (`product_configurator_setting`), which control the order of variant selection on the product.
+When importing properties or manually maintaining them, positions are stored in the `property_group_option_translation` table. After generating variants, these positions are **not** automatically transferred to configurator settings (`product_configurator_setting`), which control the order of variant selection on the product.
 
 ### The Solution
 
-This plugin synchronizes the positions retroactively with a simple console command.
+This plugin offers **three ways** for synchronization:
 
-## How It Works
+1. **🖥️ Admin Interface** - Manual synchronization via Shopware Admin Panel
+2. **⚡ CLI Command** - Fast execution via console
+3. **🔄 Scheduled Task** - Automatic background synchronization
 
-The plugin combines SQL for reading data (safe) with Shopware DAL for updates.
+## Features
 
-### Technical Process
+✅ **Three Synchronization Methods**
+- Admin UI with live statistics
+- CLI command for automation
+- Scheduled task for regular sync
 
-1. **Reading Data (SQL SELECT):**
-   - Compares `product_configurator_setting.position` with `property_group_option_translation.position`
-   - Linking via `property_group_option_id`
-   - For multiple translations, `MAX(position)` is used
+✅ **Flexible Options**
+- Dry-run preview
+- Product-specific sync via UUID filter
+- Configurable batch size
 
-2. **Update (DAL):**
-   - Only changed positions are updated
-   - Uses `product_configurator_setting.repository` for safe updates
-   - Batch updates for better performance (500 entries per batch)
+✅ **Performance Optimized**
+- Batch processing (500 entries/batch)
+- Only changed positions are updated
+- Efficient SQL queries
 
-## Installation
+✅ **Multi-Language**
+- German, English, French
+- Fully translated (Admin UI + CLI)
 
-### Requirements
+✅ **Production Ready**
+- Comprehensive error handling
+- Logging for scheduled tasks
+- Backward compatible with CLI
 
-- Shopware 6.5.x, 6.6.x, or 6.7.x
-- PHP 8.1 or higher
-- Composer (optional, for manual installation)
+## Quick Start
 
-### Installation via Shopware Store
+### Via Shopware Admin
 
-1. Search for and install the plugin in the Shopware Store
-2. Activate the plugin
-3. Clear cache
+1. **Settings** → **Variant Position Sync**
+2. Enable Dry-Run for preview
+3. Optional: Enter Product ID for specific product
+4. Click **Synchronize**
 
-### Manual Installation
-
-1. Download and extract the ZIP file to `custom/plugins/WSCPluginSWSyncVariantPositions/`
-
-2. Install and activate the plugin:
-```bash
-bin/console plugin:refresh
-bin/console plugin:install --activate WSCPluginSWSyncVariantPositions
-bin/console cache:clear
-```
-
-## Usage
-
-### Dry-Run (Preview Without Changes)
-
-Shows which positions would be changed without actually making any changes:
+### Via CLI
 
 ```bash
+# Preview (recommended for first test)
 bin/console wsc:sync-variant-positions --dry-run
-```
 
-### Execute Synchronization
-
-Synchronize all variant positions:
-
-```bash
+# Synchronize all products
 bin/console wsc:sync-variant-positions
-```
 
-### Synchronize Single Product Only
-
-Synchronize a single product by UUID:
-
-```bash
+# Only one product
 bin/console wsc:sync-variant-positions --product-id=018d9a5c3a4b70b8a8f8c2e8e8f8e8f8
-```
 
-### Verbose Output
-
-With the `-v` option, more details are displayed (shows the first 20 changes):
-
-```bash
+# With verbose output
 bin/console wsc:sync-variant-positions --dry-run -v
 ```
 
-### After Synchronization
+### Automatic Synchronization
 
-Clear cache (optional, usually not necessary):
+1. **Settings** → **System** → **Plugins** → **WSC Sync Variant Positions**
+2. Turn on "Enable Scheduled Sync"
+3. Set interval (default: 3600 seconds = 1 hour)
+4. Save
 
-```bash
-bin/console cache:clear
-```
+## Documentation
 
-## Command Line Options
-
-| Option | Short | Description |
-|--------|-------|-------------|
-| `--dry-run` | `-d` | Only shows what would be changed (no changes) |
-| `--product-id=UUID` |  | Optional: Synchronize only a specific product |
-| `-v` | | Verbose output with change details (shows first 20 changes) |
-
-## Use Cases
-
-- After importing properties with custom position values
-- After generating variants
-- When variant selection order is incorrect in the frontend
-- Regular synchronization after bulk changes
-
-## Technical Details
-
-- **Namespace:** `WSCPluginSWSyncVariantPositions`
-- **Command:** `wsc:sync-variant-positions`
-- **Repository:** `product_configurator_setting.repository`
-- **License:** GPL-3.0-or-later
-
-## Frequently Asked Questions (FAQ)
-
-**Q: Do I need to clear the cache after each use?**
-A: Usually not. DAL changes take effect immediately. Only clear the cache if you experience issues in the frontend.
-
-**Q: Can I safely execute the command?**
-A: Yes. Use `--dry-run` first to see what will be changed. The plugin only modifies position values, no other data.
-
-**Q: What happens if no position exists in property_group_option_translation?**
-A: These entries are skipped and remain unchanged.
-
-**Q: Can I run the command automatically?**
-A: Yes, e.g., as a cronjob or after an import script.
+- **[📋 Prerequisites](README-Voraussetzungen.en.md)** - What is needed?
+- **[🚀 Installation](README-Installation.en.md)** - Step-by-step guide
+- **[⚙️ Configuration](README-Konfiguration.en.md)** - All configuration options
 
 ## Support & Contributions
 
@@ -146,14 +128,20 @@ A: Yes, e.g., as a cronjob or after an import script.
 
 Pull requests are welcome! Please open an issue first to discuss larger changes.
 
-## License & Support
+## Changelog
 
-**Made with ❤️ by WSC - Web SEO Consulting**
+See [CHANGELOG.md](CHANGELOG.md) for all changes.
 
-This plugin is free and open source (GPL-3.0-or-later). If it helped you, I appreciate your support:
+## License & Credits
 
+**Made with ❤️ by [WSC - Web SEO Consulting](https://github.com/csaeum)**
+
+This project is free and open source under the [GPL-3.0-or-later](LICENSE) license.
+
+If this project helped you, I appreciate your support:
+
+[![GitHub Sponsors](https://img.shields.io/badge/Sponsor-GitHub-ea4aaa?style=for-the-badge&logo=github)](https://github.com/sponsors/csaeum)
 [![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-ffdd00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/csaeum)
-[![GitHub Sponsors](https://img.shields.io/badge/GitHub%20Sponsors-ea4aaa?style=for-the-badge&logo=github-sponsors&logoColor=white)](https://github.com/sponsors/csaeum)
 [![PayPal](https://img.shields.io/badge/PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://paypal.me/csaeum)
 
 ---

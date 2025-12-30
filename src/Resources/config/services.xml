@@ -4,10 +4,44 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
-        <service id="WSCPluginSWSyncVariantPositions\Command\SyncVariantPositionsCommand">
+        <!-- Service Layer -->
+        <service id="WSCPluginSWSyncVariantPositions\Service\VariantPositionSyncService">
             <argument type="service" id="product_configurator_setting.repository"/>
             <argument type="service" id="Doctrine\DBAL\Connection"/>
+            <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService"/>
+        </service>
+
+        <!-- Command Layer -->
+        <service id="WSCPluginSWSyncVariantPositions\Command\SyncVariantPositionsCommand">
+            <argument type="service" id="WSCPluginSWSyncVariantPositions\Service\VariantPositionSyncService"/>
             <tag name="console.command"/>
+        </service>
+
+        <!-- Controller Layer -->
+        <service id="WSCPluginSWSyncVariantPositions\Controller\Admin\VariantPositionSyncController" public="true">
+            <argument type="service" id="WSCPluginSWSyncVariantPositions\Service\VariantPositionSyncService"/>
+            <call method="setContainer">
+                <argument type="service" id="service_container"/>
+            </call>
+        </service>
+
+        <!-- Scheduled Task Layer -->
+        <service id="WSCPluginSWSyncVariantPositions\ScheduledTask\SyncVariantPositionsTask">
+            <tag name="shopware.scheduled.task"/>
+        </service>
+
+        <service id="WSCPluginSWSyncVariantPositions\ScheduledTask\SyncVariantPositionsTaskHandler">
+            <argument type="service" id="scheduled_task.repository"/>
+            <argument type="service" id="logger"/>
+            <argument type="service" id="WSCPluginSWSyncVariantPositions\Service\VariantPositionSyncService"/>
+            <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService"/>
+            <tag name="messenger.message_handler"/>
+        </service>
+
+        <!-- Event Subscriber -->
+        <service id="WSCPluginSWSyncVariantPositions\Subscriber\SystemConfigSubscriber">
+            <argument type="service" id="Doctrine\DBAL\Connection"/>
+            <tag name="kernel.event_subscriber"/>
         </service>
     </services>
 

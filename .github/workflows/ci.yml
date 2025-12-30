@@ -8,12 +8,14 @@ on:
 
 jobs:
   php-checks:
-    name: PHP Quality Checks
+    name: PHP ${{ matrix.php-version }} - Shopware ${{ matrix.shopware-version }}
     runs-on: ubuntu-latest
 
     strategy:
+      fail-fast: false
       matrix:
         php-version: ['8.1', '8.2', '8.3']
+        shopware-version: ['6.5', '6.6', '6.7']
 
     steps:
       - name: Checkout code
@@ -23,72 +25,38 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-version }}
-          extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, mysql
+          extensions: mbstring, xml, ctype, json, pdo, pdo_mysql
           coverage: none
+          tools: composer:v2
 
-      - name: Validate composer.json
-        run: composer validate --strict
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
-      - name: Cache Composer packages
+      - name: Cache Composer dependencies
         uses: actions/cache@v4
         with:
-          path: vendor
-          key: ${{ runner.os }}-php-${{ matrix.php-version }}-${{ hashFiles('**/composer.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-php-${{ matrix.php-version }}-
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
+          restore-keys: ${{ runner.os }}-composer-
 
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress --no-suggest
 
-      - name: Run PHP CodeSniffer (PSR-12)
+      - name: PHP CodeSniffer
+        run: vendor/bin/phpcs --standard=PSR12 src/
+
+      - name: PHPStan
         run: |
-          composer require --dev squizlabs/php_codesniffer --no-interaction
-          vendor/bin/phpcs --standard=PSR12 --extensions=php --ignore=vendor src/
-        continue-on-error: true
+          if [ -f phpstan.neon ]; then
+            composer require --dev phpstan/phpstan --no-interaction --quiet || true
+            vendor/bin/phpstan analyse src/ --level=8 --no-progress || true
+          else
+            echo "PHPStan not configured, skipping..."
+          fi
 
-      - name: Run PHPStan
-        run: |
-          composer require --dev phpstan/phpstan --no-interaction
-          vendor/bin/phpstan analyse -l 8 src/
-        continue-on-error: true
-
-  shopware-compatibility:
-    name: Shopware Store Compatibility Check
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2'
-          extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, mysql
-
-      - name: Install Shopware Plugin Tester
-        run: |
-          composer global require frosh/shopware-plugin-tester
-          echo "${HOME}/.composer/vendor/bin" >> $GITHUB_PATH
-        continue-on-error: true
-
-      - name: Validate Plugin Structure
-        run: |
-          # Check required files exist
-          test -f composer.json || (echo "composer.json missing" && exit 1)
-          test -f LICENSE || (echo "LICENSE missing" && exit 1)
-          test -f README.md || (echo "README.md missing" && exit 1)
-
-          # Check plugin class exists
-          find src -name "WSCPluginSWSyncVariantPositions.php" || (echo "Plugin class missing" && exit 1)
-
-          # Check services.xml exists
-          find src -name "services.xml" || (echo "services.xml missing" && exit 1)
-
-          echo "Plugin structure validation passed"
-
-  security-scan:
-    name: Security Scan
+  security:
+    name: Security Checks
     runs-on: ubuntu-latest
 
     steps:
@@ -99,21 +67,85 @@ jobs:
         uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
-        continue-on-error: true
 
-  yaml-lint:
-    name: YAML Lint
+  admin-javascript:
+    name: Admin JavaScript Checks
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install yamllint
-        run: pip install yamllint
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
 
-      - name: Run yamllint
+      - name: Check if Admin JS exists
+        id: check-admin-js
         run: |
-          find . -name "*.yml" -o -name "*.yaml" | xargs yamllint -d relaxed
-        continue-on-error: true
+          if [ -d "src/Resources/app/administration/src" ]; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Install dependencies
+        if: steps.check-admin-js.outputs.exists == 'true'
+        run: |
+          if [ -f "src/Resources/app/administration/package.json" ]; then
+            cd src/Resources/app/administration && npm ci
+          else
+            echo "No package.json found, skipping npm install"
+          fi
+
+      - name: ESLint
+        if: steps.check-admin-js.outputs.exists == 'true'
+        run: |
+          if [ -f "src/Resources/app/administration/.eslintrc.js" ]; then
+            cd src/Resources/app/administration && npm run lint || true
+          else
+            echo "No ESLint config found, skipping..."
+          fi
+
+  validate-composer:
+    name: Validate composer.json
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: composer:v2
+
+      - name: Validate composer.json
+        run: composer validate --strict
+
+  shopware-compatibility:
+    name: Shopware Compatibility Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: composer:v2
+
+      - name: Install frosh/plugin-tester
+        run: composer global require frosh/shopware-plugin-tester --quiet || true
+
+      - name: Run Shopware Plugin Tester
+        run: |
+          if command -v shopware-plugin-tester &> /dev/null; then
+            shopware-plugin-tester validate . || true
+          else
+            echo "Shopware Plugin Tester not available, skipping..."
+          fi

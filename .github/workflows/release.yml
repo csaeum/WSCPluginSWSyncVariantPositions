@@ -1,0 +1,82 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Get version from tag
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: composer:v2
+
+      - name: Install dependencies
+        run: composer install --no-dev --optimize-autoloader --prefer-dist
+
+      - name: Create plugin archive
+        run: |
+          # Create temporary directory
+          mkdir -p /tmp/plugin-build
+
+          # Copy plugin files (respecting .gitattributes)
+          git archive --format=tar HEAD | tar -x -C /tmp/plugin-build/
+
+          # Copy vendor directory (if needed for production)
+          if [ -d "vendor" ]; then
+            cp -r vendor /tmp/plugin-build/
+          fi
+
+          # Create ZIP without version number (important for Shopware compatibility)
+          cd /tmp/plugin-build
+          zip -r WSCPluginSWSyncVariantPositions.zip . -x "*.git*" -x "*tests/*" -x "*.github/*" -x "*phpunit.xml*" -x "*phpcs.xml*" -x "*phpstan.neon*"
+
+          # Move to workspace
+          mv WSCPluginSWSyncVariantPositions.zip $GITHUB_WORKSPACE/
+
+      - name: Extract changelog for this version
+        id: changelog
+        run: |
+          if [ -f CHANGELOG.md ]; then
+            # Extract changelog for current version
+            sed -n "/## \[${{ steps.get_version.outputs.VERSION }}\]/,/## \[/p" CHANGELOG.md | sed '$d' > /tmp/release-notes.md
+
+            # If empty, use a default message
+            if [ ! -s /tmp/release-notes.md ]; then
+              echo "Release version ${{ steps.get_version.outputs.VERSION }}" > /tmp/release-notes.md
+            fi
+          else
+            echo "Release version ${{ steps.get_version.outputs.VERSION }}" > /tmp/release-notes.md
+          fi
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: Release ${{ steps.get_version.outputs.VERSION }}
+          body_path: /tmp/release-notes.md
+          files: |
+            WSCPluginSWSyncVariantPositions.zip
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Shopware Store Upload (if configured)
+        if: ${{ secrets.SHOPWARE_ACCOUNT_USER != '' }}
+        run: |
+          echo "Shopware Store upload would happen here if credentials are configured"
+          # This would require Shopware store credentials
+          # frosh/shopware-plugin-uploader can be used for automation

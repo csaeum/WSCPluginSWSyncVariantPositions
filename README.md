@@ -2,14 +2,47 @@
 
 **[English](README.en.md) | [Français](README.fr.md)**
 
+![Shopware 6](https://img.shields.io/badge/Shopware-6.5%20%7C%206.6%20%7C%206.7-179EFF?logo=shopware&logoColor=white)
+![PHP](https://img.shields.io/badge/PHP-8.1%2B-777BB4?logo=php&logoColor=white)
+![License](https://img.shields.io/badge/License-GPL--3.0--or--later-blue)
+![Maintained](https://img.shields.io/badge/Maintained-Yes-green)
+
+---
+
+## ⭐ Lizenz & Unterstützung
+
+**Made with ❤️ by [WSC - Web SEO Consulting](https://github.com/csaeum)**
+
+Dieses Projekt ist kostenlos und Open Source unter der [GPL-3.0-or-later](LICENSE) Lizenz.
+
+---
+
+### 💖 Unterstütze meine Arbeit
+
+Wenn dir dieses Projekt geholfen hat:
+
+[![GitHub Sponsors](https://img.shields.io/badge/Sponsor-GitHub-ea4aaa?style=for-the-badge&logo=github)](https://github.com/sponsors/csaeum)
+[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-ffdd00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/csaeum)
+[![PayPal](https://img.shields.io/badge/PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://paypal.me/csaeum)
+
+---
+
+### 🔧 Weitere Shopware Plugins
+
+| Plugin | Beschreibung |
+|--------|--------------|
+| [WSCPluginSWSyncVariantPositions](https://github.com/csaeum/WSCPluginSWSyncVariantPositions) | Varianten-Positionen synchronisieren |
+
+---
+
+[![GitHub followers](https://img.shields.io/github/followers/csaeum?style=social)](https://github.com/csaeum)
+[![GitHub stars](https://img.shields.io/github/stars/csaeum?style=social)](https://github.com/csaeum?tab=repositories)
+
+---
+
+## Was macht dieses Plugin?
+
 Synchronisiert die Positionen der Varianten-Auswahl (`product_configurator_setting.position`) mit den Eigenschaftswert-Positionen aus `property_group_option_translation.position` in Shopware 6.
-
-## Kompatibilität
-
-- Shopware 6.5.x, 6.6.x, 6.7.x
-- **Wichtig:** Bei anderen Shopware Versionen bitte immer davor ein Datenbank-Backup erstellen!
-
-## Problem & Lösung
 
 ### Das Problem
 
@@ -17,126 +50,75 @@ Beim Import von Eigenschaften (Properties) oder bei manueller Pflege werden die 
 
 ### Die Lösung
 
-Dieses Plugin synchronisiert die Positionen nachträglich mit einem einfachen Konsolen-Befehl.
+Dieses Plugin bietet **drei Wege** zur Synchronisation:
 
-## Funktionsweise
+1. **🖥️ Admin Interface** - Manuelle Synchronisation über das Shopware Admin Panel
+2. **⚡ CLI Command** - Schnelle Ausführung über die Konsole
+3. **🔄 Scheduled Task** - Automatische Hintergrund-Synchronisation
 
-Das Plugin kombiniert SQL für das Lesen der Daten (sicher) mit Shopware DAL für Updates.
+## Features
 
-### Technischer Ablauf
+✅ **Drei Synchronisations-Methoden**
+- Admin UI mit Live-Statistiken
+- CLI-Command für Automatisierung
+- Scheduled Task für regelmäßige Sync
 
-1. **Lesen der Daten (SQL SELECT):**
-   - Vergleicht `product_configurator_setting.position` mit `property_group_option_translation.position`
-   - Verknüpfung über `property_group_option_id`
-   - Bei mehreren Übersetzungen wird `MAX(position)` verwendet
+✅ **Flexible Optionen**
+- Dry-Run Vorschau
+- Produkt-spezifischer Sync via UUID-Filter
+- Konfigurierbare Batch-Größe
 
-2. **Aktualisierung (DAL):**
-   - Nur geänderte Positionen werden aktualisiert
-   - Verwendet `product_configurator_setting.repository` für sichere Updates
-   - Batch-Updates für bessere Performance (500 Einträge pro Batch)
+✅ **Performance-Optimiert**
+- Batch-Processing (500 Einträge/Batch)
+- Nur geänderte Positionen werden aktualisiert
+- Effiziente SQL-Queries
 
-## Installation
+✅ **Multi-Language**
+- Deutsch, Englisch, Französisch
+- Vollständig übersetzt (Admin UI + CLI)
 
-### Voraussetzungen
+✅ **Produktionsbereit**
+- Umfangreiches Error-Handling
+- Logging für Scheduled Tasks
+- Rückwärtskompatibel mit CLI
 
-- Shopware 6.5.x, 6.6.x oder 6.7.x
-- PHP 8.1 oder höher
-- Composer (optional, für manuelle Installation)
+## Schnellstart
 
-### Installation über Shopware Store
+### Über Shopware Admin
 
-1. Plugin im Shopware Store suchen und installieren
-2. Plugin aktivieren
-3. Cache leeren
+1. **Settings** → **Varianten Position Sync**
+2. Dry-Run aktivieren für Vorschau
+3. Optional: Produkt-ID eingeben für spezifisches Produkt
+4. **Synchronisieren** klicken
 
-### Manuelle Installation
-
-1. ZIP-Datei herunterladen und entpacken nach `custom/plugins/WSCPluginSWSyncVariantPositions/`
-
-2. Plugin installieren und aktivieren:
-```bash
-bin/console plugin:refresh
-bin/console plugin:install --activate WSCPluginSWSyncVariantPositions
-bin/console cache:clear
-```
-
-## Verwendung
-
-### Dry-Run (Vorschau ohne Änderungen)
-
-Zeigt an, welche Positionen geändert werden würden, ohne tatsächlich etwas zu ändern:
+### Über CLI
 
 ```bash
+# Vorschau (empfohlen für ersten Test)
 bin/console wsc:sync-variant-positions --dry-run
-```
 
-### Synchronisation ausführen
-
-Alle Variantenpositionen synchronisieren:
-
-```bash
+# Alle Produkte synchronisieren
 bin/console wsc:sync-variant-positions
-```
 
-### Nur ein Produkt synchronisieren
-
-Ein einzelnes Produkt anhand der UUID synchronisieren:
-
-```bash
+# Nur ein Produkt
 bin/console wsc:sync-variant-positions --product-id=018d9a5c3a4b70b8a8f8c2e8e8f8e8f8
-```
 
-### Ausführliche Ausgabe
-
-Mit der `-v` Option werden mehr Details angezeigt (zeigt die ersten 20 Änderungen):
-
-```bash
+# Mit ausführlicher Ausgabe
 bin/console wsc:sync-variant-positions --dry-run -v
 ```
 
-### Nach der Synchronisation
+### Automatische Synchronisation
 
-Cache leeren (optional, meist nicht nötig):
+1. **Einstellungen** → **System** → **Plugins** → **WSC Sync Variant Positions**
+2. "Geplante Synchronisation aktivieren" einschalten
+3. Intervall einstellen (Standard: 3600 Sekunden = 1 Stunde)
+4. Speichern
 
-```bash
-bin/console cache:clear
-```
+## Dokumentation
 
-## Kommandozeilen-Optionen
-
-| Option | Kurz | Beschreibung |
-|--------|------|--------------|
-| `--dry-run` | `-d` | Zeigt nur an, was geändert werden würde (keine Änderungen) |
-| `--product-id=UUID` |  | Optional: Nur ein bestimmtes Produkt synchronisieren |
-| `-v` | | Ausführliche Ausgabe mit Änderungsdetails (zeigt erste 20 Änderungen) |
-
-## Anwendungsfälle
-
-- Nach dem Import von Eigenschaften mit eigenen Positions-Werten
-- Nach dem Generieren von Varianten
-- Bei falscher Reihenfolge der Variantenauswahl im Frontend
-- Regelmäßige Synchronisation nach Bulk-Änderungen
-
-## Technische Details
-
-- **Namespace:** `WSCPluginSWSyncVariantPositions`
-- **Command:** `wsc:sync-variant-positions`
-- **Repository:** `product_configurator_setting.repository`
-- **Lizenz:** GPL-3.0-or-later
-
-## Häufige Fragen (FAQ)
-
-**Q: Muss ich nach jeder Verwendung den Cache leeren?**
-A: In der Regel nicht. Die DAL-Änderungen werden sofort wirksam. Nur bei Problemen im Frontend sollte der Cache geleert werden.
-
-**Q: Kann ich den Befehl gefahrlos ausführen?**
-A: Ja. Verwende zuerst `--dry-run` um zu sehen, was geändert wird. Das Plugin ändert nur Positions-Werte, keine anderen Daten.
-
-**Q: Was passiert, wenn keine Position in property_group_option_translation vorhanden ist?**
-A: Diese Einträge werden übersprungen und bleiben unverändert.
-
-**Q: Kann ich den Befehl automatisiert ausführen?**
-A: Ja, z.B. als Cronjob oder nach einem Import-Script.
+- **[📋 Voraussetzungen](README-Voraussetzungen.md)** - Was wird benötigt?
+- **[🚀 Installation](README-Installation.md)** - Schritt-für-Schritt Anleitung
+- **[⚙️ Konfiguration](README-Konfiguration.md)** - Alle Einstellungsmöglichkeiten
 
 ## Support & Beiträge
 
@@ -146,14 +128,20 @@ A: Ja, z.B. als Cronjob oder nach einem Import-Script.
 
 Pull Requests sind willkommen! Bitte öffne zuerst ein Issue, um größere Änderungen zu besprechen.
 
-## Lizenz & Unterstützung
+## Changelog
 
-**Made with ❤️ by WSC - Web SEO Consulting**
+Siehe [CHANGELOG.md](CHANGELOG.md) für alle Änderungen.
 
-Dieses Plugin ist kostenlos und Open Source (GPL-3.0-or-later). Wenn es dir geholfen hat, freue ich mich über deine Unterstützung:
+## Lizenz & Credits
 
+**Made with ❤️ by [WSC - Web SEO Consulting](https://github.com/csaeum)**
+
+Dieses Projekt ist kostenlos und Open Source unter der [GPL-3.0-or-later](LICENSE) Lizenz.
+
+Wenn dir dieses Projekt geholfen hat, freue ich mich über deine Unterstützung:
+
+[![GitHub Sponsors](https://img.shields.io/badge/Sponsor-GitHub-ea4aaa?style=for-the-badge&logo=github)](https://github.com/sponsors/csaeum)
 [![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-ffdd00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/csaeum)
-[![GitHub Sponsors](https://img.shields.io/badge/GitHub%20Sponsors-ea4aaa?style=for-the-badge&logo=github-sponsors&logoColor=white)](https://github.com/sponsors/csaeum)
 [![PayPal](https://img.shields.io/badge/PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://paypal.me/csaeum)
 
 ---

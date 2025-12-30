@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/shopware/shopware/trunk/src/Core/System/SystemConfig/Schema/config.xsd">
+
+    <card>
+        <title>Scheduled Task Settings</title>
+        <title lang="de-DE">Geplante Aufgabe Einstellungen</title>
+        <title lang="fr-FR">Paramètres de tâche planifiée</title>
+
+        <input-field type="bool">
+            <name>scheduledTaskEnabled</name>
+            <label>Enable Scheduled Sync</label>
+            <label lang="de-DE">Geplante Synchronisation aktivieren</label>
+            <label lang="fr-FR">Activer la synchronisation planifiée</label>
+            <defaultValue>false</defaultValue>
+            <helpText>Automatically sync variant positions in background</helpText>
+            <helpText lang="de-DE">Variantenpositionen automatisch im Hintergrund synchronisieren</helpText>
+            <helpText lang="fr-FR">Synchroniser automatiquement les positions des variantes en arrière-plan</helpText>
+        </input-field>
+
+        <input-field type="int">
+            <name>scheduledTaskInterval</name>
+            <label>Sync Interval (seconds)</label>
+            <label lang="de-DE">Synchronisationsintervall (Sekunden)</label>
+            <label lang="fr-FR">Intervalle de synchronisation (secondes)</label>
+            <defaultValue>3600</defaultValue>
+            <helpText>How often to run the sync (3600 = 1 hour, 86400 = 1 day)</helpText>
+            <helpText lang="de-DE">Wie oft die Synchronisation ausgeführt wird (3600 = 1 Stunde, 86400 = 1 Tag)</helpText>
+            <helpText lang="fr-FR">Fréquence d'exécution de la synchronisation (3600 = 1 heure, 86400 = 1 jour)</helpText>
+        </input-field>
+    </card>
+
+    <card>
+        <title>Sync Behavior</title>
+        <title lang="de-DE">Synchronisationsverhalten</title>
+        <title lang="fr-FR">Comportement de synchronisation</title>
+
+        <input-field type="int">
+            <name>batchSize</name>
+            <label>Batch Size</label>
+            <label lang="de-DE">Batch-Größe</label>
+            <label lang="fr-FR">Taille du lot</label>
+            <defaultValue>500</defaultValue>
+            <helpText>Number of records to process per batch</helpText>
+            <helpText lang="de-DE">Anzahl der Datensätze pro Batch</helpText>
+            <helpText lang="fr-FR">Nombre d'enregistrements à traiter par lot</helpText>
+        </input-field>
+    </card>
+</config>

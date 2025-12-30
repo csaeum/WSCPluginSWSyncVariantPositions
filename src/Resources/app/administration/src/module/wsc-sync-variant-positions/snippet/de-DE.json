@@ -1,0 +1,30 @@
+{
+    "wsc-sync-variant-positions": {
+        "general": {
+            "mainMenuItemGeneral": "Varianten Position Sync",
+            "descriptionTextModule": "Synchronisiert Variantenpositionen"
+        },
+        "index": {
+            "optionsCardTitle": "Synchronisations-Optionen",
+            "resultsCardTitle": "Ergebnisse",
+            "dryRunLabel": "Vorschau (Dry-Run)",
+            "productIdLabel": "Produkt-ID (optional)",
+            "productIdPlaceholder": "z.B. 018d9a5c3a4b70b8a8f8c2e8e8f8e8f8",
+            "syncButton": "Jetzt synchronisieren",
+            "previewButton": "Vorschau anzeigen",
+            "resetButton": "Zurücksetzen",
+            "unchangedLabel": "Unverändert",
+            "skippedLabel": "Übersprungen",
+            "updatedLabel": "Aktualisiert",
+            "dryRunInfoTitle": "Vorschau-Modus",
+            "dryRunInfoText": "Dies ist eine Vorschau. Schalte den Dry-Run Modus aus, um die Änderungen tatsächlich anzuwenden.",
+            "syncCompleteTitle": "Synchronisation abgeschlossen",
+            "syncCompleteText": "Die Variantenpositionen wurden erfolgreich synchronisiert."
+        },
+        "notifications": {
+            "syncSuccess": "{count} Position(en) erfolgreich synchronisiert | {count} Position(en) erfolgreich synchronisiert",
+            "previewSuccess": "{count} Position(en) würden aktualisiert | {count} Position(en) würden aktualisiert",
+            "syncError": "Fehler bei der Synchronisation"
+        }
+    }
+}

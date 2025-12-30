@@ -1,0 +1,86 @@
+{% block wsc_sync_variant_positions_index %}
+    <sw-page class="wsc-sync-variant-positions-index">
+        {% block wsc_sync_variant_positions_index_content %}
+            <template #content>
+
+                {% block wsc_sync_variant_positions_index_options_card %}
+                    <sw-card :title="$tc('wsc-sync-variant-positions.index.optionsCardTitle')" :isLoading="isLoading">
+                        <sw-container columns="1fr" gap="20px">
+
+                            <sw-switch
+                                v-model="isDryRun"
+                                :label="$tc('wsc-sync-variant-positions.index.dryRunLabel')"
+                                :disabled="isLoading">
+                            </sw-switch>
+
+                            <sw-text-field
+                                v-model="productId"
+                                :label="$tc('wsc-sync-variant-positions.index.productIdLabel')"
+                                :placeholder="$tc('wsc-sync-variant-positions.index.productIdPlaceholder')"
+                                :disabled="isLoading">
+                            </sw-text-field>
+
+                            <sw-button
+                                variant="primary"
+                                :disabled="!canSync"
+                                @click="onSync">
+                                {{ isDryRun ? $tc('wsc-sync-variant-positions.index.previewButton') : $tc('wsc-sync-variant-positions.index.syncButton') }}
+                            </sw-button>
+
+                        </sw-container>
+                    </sw-card>
+                {% endblock %}
+
+                {% block wsc_sync_variant_positions_index_results_card %}
+                    <sw-card
+                        v-if="showResults"
+                        :title="$tc('wsc-sync-variant-positions.index.resultsCardTitle')">
+
+                        <sw-container columns="repeat(auto-fit, minmax(200px, 1fr))" gap="20px">
+
+                            <sw-card class="wsc-sync-variant-positions-index__stat-card">
+                                <h3>{{ $tc('wsc-sync-variant-positions.index.updatedLabel') }}</h3>
+                                <p class="wsc-sync-variant-positions-index__stat-value wsc-sync-variant-positions-index__stat-value--updated">
+                                    {{ syncResult.updatedCount }}
+                                </p>
+                            </sw-card>
+
+                            <sw-card class="wsc-sync-variant-positions-index__stat-card">
+                                <h3>{{ $tc('wsc-sync-variant-positions.index.unchangedLabel') }}</h3>
+                                <p class="wsc-sync-variant-positions-index__stat-value wsc-sync-variant-positions-index__stat-value--unchanged">
+                                    {{ syncResult.unchangedCount }}
+                                </p>
+                            </sw-card>
+
+                            <sw-card class="wsc-sync-variant-positions-index__stat-card">
+                                <h3>{{ $tc('wsc-sync-variant-positions.index.skippedLabel') }}</h3>
+                                <p class="wsc-sync-variant-positions-index__stat-value wsc-sync-variant-positions-index__stat-value--skipped">
+                                    {{ syncResult.skippedCount }}
+                                </p>
+                            </sw-card>
+
+                        </sw-container>
+
+                        <div v-if="isDryRun" class="wsc-sync-variant-positions-index__info">
+                            <sw-alert variant="info" :title="$tc('wsc-sync-variant-positions.index.dryRunInfoTitle')">
+                                {{ $tc('wsc-sync-variant-positions.index.dryRunInfoText') }}
+                            </sw-alert>
+                        </div>
+
+                        <div v-else class="wsc-sync-variant-positions-index__info">
+                            <sw-alert variant="success" :title="$tc('wsc-sync-variant-positions.index.syncCompleteTitle')">
+                                {{ $tc('wsc-sync-variant-positions.index.syncCompleteText') }}
+                            </sw-alert>
+                        </div>
+
+                        <sw-button @click="onReset">
+                            {{ $tc('wsc-sync-variant-positions.index.resetButton') }}
+                        </sw-button>
+
+                    </sw-card>
+                {% endblock %}
+
+            </template>
+        {% endblock %}
+    </sw-page>
+{% endblock %}

@@ -1,0 +1,36 @@
+.wsc-sync-variant-positions-index {
+    &__stat-card {
+        text-align: center;
+        padding: 20px;
+
+        h3 {
+            font-size: 14px;
+            font-weight: 600;
+            margin: 0 0 10px 0;
+            color: #52667a;
+        }
+    }
+
+    &__stat-value {
+        font-size: 32px;
+        font-weight: 700;
+        margin: 0;
+
+        &--updated {
+            color: #37d046;
+        }
+
+        &--unchanged {
+            color: #52667a;
+        }
+
+        &--skipped {
+            color: #ffab00;
+        }
+    }
+
+    &__info {
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+}

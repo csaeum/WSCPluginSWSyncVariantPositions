@@ -1,6 +1,6 @@
 {
     "name": "wsc/sync-variant-positions",
-    "version": "6.7.0",
+    "version": "6.7.5.1",
     "description": "Sync configurator_setting.position mit option_translation.position",
     "type": "shopware-platform-plugin",
     "license": "GPL-3.0-or-later",
@@ -21,8 +21,8 @@
             "en-GB": "Syncs configurator setting positions with property group option positions"
         },
         "label": {
-            "de-DE": "WSC Varianten Positionen sync",
-            "en-GB": "Sync Configurator Positions"
+            "de-DE": "WSC | sync Varianten Positionen",
+            "en-GB": "WSC | Sync Configurator Positions"
         },
         "shopware-plugin-class": "WSCPluginSWSyncVariantPositions\\WSCPluginSWSyncVariantPositions",
         "supportLink": {
